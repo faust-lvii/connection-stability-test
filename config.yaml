@@ -1,0 +1,68 @@
+# Ağ izleme hedefleri
+targets:
+  - name: "Google DNS"
+    address: "8.8.8.8"
+    interval: 1.0  # saniye
+  - name: "Cloudflare DNS"
+    address: "1.1.1.1"
+    interval: 1.0
+
+# InfluxDB yapılandırması
+influxdb:
+  url: "http://localhost:8086"
+  token: "your-token-here"
+  org: "your-org"
+  bucket: "network-metrics"
+  batch_size: 100
+  flush_interval: 10  # saniye
+
+# PostgreSQL yapılandırması
+postgresql:
+  dsn: "postgresql://user:password@localhost:5432/network_monitor"
+
+# Uygulama ayarları
+app:
+  language: "tr"  # tr veya en
+  cpu_check_interval: 60  # saniye
+  ui:
+    update_interval: 1.0  # saniye
+    theme: "light"  # light veya dark
+    chart_points: 100  # grafiklerde gösterilecek nokta sayısı
+
+# Loglama yapılandırması
+logging:
+  version: 1
+  disable_existing_loggers: false
+  formatters:
+    standard:
+      format: '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+  handlers:
+    console:
+      class: logging.StreamHandler
+      level: INFO
+      formatter: standard
+      stream: ext://sys.stdout
+    file:
+      class: logging.handlers.RotatingFileHandler
+      level: DEBUG
+      formatter: standard
+      filename: network_monitor.log
+      maxBytes: 10485760  # 10MB
+      backupCount: 3
+  root:
+    level: INFO
+    handlers: [console, file]
+
+# Uyarı yapılandırması
+alerts:
+  latency_threshold: 100  # ms
+  packet_loss_threshold: 5  # yüzde
+  notification_cooldown: 300  # saniye
+  methods:
+    - type: "email"
+      enabled: false
+      smtp_server: "smtp.gmail.com"
+      smtp_port: 587
+      username: "your-email@gmail.com"
+      password: "your-app-password"
+      recipients: ["admin@example.com"] 
